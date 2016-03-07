@@ -67,7 +67,7 @@ namespace gazebo
       // Listen to the update event. This event is broadcast every
       // simulation iteration.
       this->updateConnection = event::Events::ConnectWorldUpdateBegin(
-          boost::bind(&ModelPush::OnUpdate, this, _1));
+          boost::bind(&MarkPlugin::OnUpdate, this, _1));
     }
 
     // Called by the world update start event
@@ -188,5 +188,5 @@ namespace gazebo
   };
 
   // Register this plugin with the simulator
-  GZ_REGISTER_MODEL_PLUGIN(ModelPush)
+  GZ_REGISTER_MODEL_PLUGIN(MarkPlugin)
 }
