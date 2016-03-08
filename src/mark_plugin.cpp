@@ -4,16 +4,22 @@
 #include <gazebo/common/common.hh>
 #include <stdio.h>
 
+// Circle radius
 #define RADIUS 3
 
+// Square height and width
 #define HEIGHT 3
 #define WIDTH  3
 
+// Define shapes
 #define CIRCLE 0
 #define SQUARE 1
+#define STOP   2
+#define DOT    2 // DOT == STOP
 
 //#define STEP   0.001
 
+// Square status
 #define INITIAL 0
 #define SIDE0   1
 #define SIDE1   2
@@ -35,7 +41,7 @@ namespace gazebo
     private: double initialX, initialY, initialZ;
     private: double initialRoll, initialPitch, initialYaw;
     private: float angle;
-    private: int form;
+    private: int shape;
 
     private: float X, Y;
 
@@ -43,7 +49,7 @@ namespace gazebo
 
     private: int status;
 
-    public: void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/)
+    public: void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     {
       // Store the pointer to the model
       this->model = _parent;
@@ -58,8 +64,23 @@ namespace gazebo
       initialPitch  = initialPose.pos[4];
       initialYaw    = initialPose.pos[5];
 
+      std::string shapeParam = _sdf->Get<std::string>("shape");
+      std::transform(shapeParam.begin(), shapeParam.end(), shapeParam.begin(), ::tolower);
+
+      if(shapeParam == "square"){
+        shape = SQUARE;
+      } else if ( shapeParam == "circle"){
+        shape = CIRCLE;
+      } else if ( shapeParam == "dot"){
+        shape = DOT;
+      } else if ( shapeParam == "stop"){
+        shape = STOP;
+      } else {
+        shape = STOP;
+      }
+
       // Hardcoded for testing
-      form = SQUARE; 
+      // shape = SQUARE; 
       STEP = 0.001; 
 
       status = INITIAL;
@@ -77,7 +98,7 @@ namespace gazebo
       //this->model->SetLinearVel(math::Vector3(1, 0, 0));
       //this->model->SetAngularVel(math::Vector3(0, 0, 1));
 
-      switch (form)
+      switch (shape)
       {
         case CIRCLE:
         {
@@ -87,7 +108,7 @@ namespace gazebo
           math::Pose pose = math::Pose(math::Vector3(X,Y,initialZ), math::Quaternion(math::Vector3(initialRoll,initialPitch,initialYaw)));
           this->model->SetWorldPose(pose);
           break;
-        }
+        } // end case CIRCLE
           
 
         case SQUARE:
@@ -180,13 +201,25 @@ namespace gazebo
               break;
             }
 
-          }
+          }  
+
           break;
-        }       
-      }
-    }
+          
+        } // end case SQUARE
+
+      case (STOP):
+      {
+        break;
+      }  // end case STOP
+
+      break;
+
+      } // end switch shape
+
+    } // end void OnUpdate
+
   };
 
   // Register this plugin with the simulator
   GZ_REGISTER_MODEL_PLUGIN(MarkPlugin)
-}
+} // end namespace GAZEBO
