@@ -81,7 +81,7 @@ namespace gazebo
 
       // Hardcoded for testing
       // shape = SQUARE; 
-      STEP = 0.001; 
+      STEP = 0.0005; 
 
       status = INITIAL;
 
@@ -102,7 +102,7 @@ namespace gazebo
       {
         case CIRCLE:
         {
-          angle = angle + 0.0005;
+          angle = angle + 0.0004;
           X = initialX + sin(angle) * RADIUS;
           Y = initialY + cos(angle) * RADIUS;
           math::Pose pose = math::Pose(math::Vector3(X,Y,initialZ), math::Quaternion(math::Vector3(initialRoll,initialPitch,initialYaw)));
